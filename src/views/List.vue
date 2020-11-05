@@ -78,8 +78,8 @@
           <div class="currencyBlock">
             <div class="blockHeader"><h3>КУРСЫ ВАЛЮТ</h3></div>
             <div class="blockContent">
-              <div>USD {{ USD.Value }} ({{ USD.Previous }})</div>
-              <div>EUR {{ EUR.Value }} ({{ EUR.Previous }})</div>
+              <div>USD {{ USD.Value }} | ({{ USD.Previous }})</div>
+              <div>EUR {{ EUR.Value }} | ({{ EUR.Previous }})</div>
             </div>
           </div>
         </div>

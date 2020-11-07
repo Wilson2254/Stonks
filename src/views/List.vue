@@ -61,7 +61,7 @@
             </div>
             <div>
               {{ company.change }}
-              %
+              % <span>Ы</span>
             </div>
             <div>{{ company.valute }}</div>
             <div>{{ company.industry }}</div>

@@ -59,9 +59,13 @@
             <div>
               {{ company.current }}
             </div>
-            <div>
-              {{ company.change }}
-              %
+            <div
+              class="change"
+              :style="{ color: company.change < 0 ? '#EC0033' : 'green' }"
+            >
+              <span class="down" v-if="company.change < 0">&#9660;</span>
+              <span class="up" v-else>&#9650;</span>
+              {{ Math.abs(company.change) }} %
             </div>
             <div>{{ company.valute }}</div>
             <div>{{ company.industry }}</div>
@@ -81,10 +85,59 @@
             </div>
           </div>
           <div class="currencyBlock">
-            <div class="blockHeader"><h3>КУРСЫ ВАЛЮТ</h3></div>
+            <div class="blockHeader">
+              <h3>КУРСЫ ВАЛЮТ ({{ dateValute }})</h3>
+            </div>
             <div class="blockContent">
-              <div>USD {{ USD.Value }} | ({{ USD.Previous }})</div>
-              <div>EUR {{ EUR.Value }} | ({{ EUR.Previous }})</div>
+              <div>
+                USD {{ USD.Value }}
+                <span
+                  class="down"
+                  v-if="((USD.Value * 100) / USD.Previous - 100).toFixed(2) < 0"
+                  >&#9660;</span
+                >
+                <span class="up" v-else>&#9650;</span>
+                <span
+                  :style="{
+                    color:
+                      ((USD.Value * 100) / USD.Previous - 100).toFixed(2) < 0
+                        ? '#EC0033'
+                        : 'rgb(2, 255, 2)',
+                  }"
+                >
+                  {{
+                    Math.abs(
+                      ((USD.Value * 100) / USD.Previous - 100).toFixed(2)
+                    )
+                  }}
+                  %
+                </span>
+              </div>
+
+              <div>
+                EUR {{ EUR.Value }}
+                <span
+                  class="down"
+                  v-if="((EUR.Value * 100) / EUR.Previous - 100).toFixed(2) < 0"
+                  >&#9660;</span
+                >
+                <span class="up" v-else>&#9650;</span>
+                <span
+                  :style="{
+                    color:
+                      ((EUR.Value * 100) / EUR.Previous - 100).toFixed(2) < 0
+                        ? '#EC0033'
+                        : 'rgb(2, 255, 2)',
+                  }"
+                >
+                  {{
+                    Math.abs(
+                      ((EUR.Value * 100) / EUR.Previous - 100).toFixed(2)
+                    )
+                  }}
+                  %
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -104,9 +157,10 @@ export default {
       companies: [],
       USD: 0,
       EUR: 0,
+      dateValute: new Date(),
+      dateStock: new Date(),
       search: "",
       filterIndustry: "",
-      act: [],
     };
   },
   computed: {
@@ -136,6 +190,7 @@ export default {
   //Получаем акции компаний, которые есть в БД
   async mounted() {
     const res = await axios.get(`https://www.cbr-xml-daily.ru/daily_json.js`);
+    this.dateValute = res.data.Date.slice(0, -15);
     this.USD = res.data.Valute.USD;
     this.EUR = res.data.Valute.EUR;
     db.collection("Company")
@@ -153,7 +208,7 @@ export default {
             owner: data.owner,
             symbol: data.symbol,
             current: axios.get(
-              `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${data.symbol}&apikey=C7K3G8O9D4JDF35A`
+              `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${data.symbol}&apikey=8BKT3392WBPTYAE5`
             ),
             change: null,
           };
@@ -164,20 +219,45 @@ export default {
       .then((response) => {
         this.companies.forEach((item, i) => {
           item.current.then((response) => {
-            item.current =
-              response.data["Time Series (Daily)"]["2020-11-06"]["1. open"];
+            item.current = Number.parseFloat(
+              response.data["Time Series (Daily)"][
+                response.data["Meta Data"]["3. Last Refreshed"]
+              ]["4. close"]
+            ).toFixed(2);
             item.change = (
-              (response.data["Time Series (Daily)"]["2020-11-06"]["1. open"] *
+              (response.data["Time Series (Daily)"][
+                response.data["Meta Data"]["3. Last Refreshed"]
+              ]["4. close"] *
                 100) /
-                response.data["Time Series (Daily)"]["2020-11-05"]["1. open"] -
+                response.data["Time Series (Daily)"][
+                  response.data["Meta Data"]["3. Last Refreshed"]
+                ]["1. open"] -
               100
             ).toFixed(2);
           });
         });
       });
   },
+
   methods: {
-    
+    today() {
+      let today = new Date();
+      let dd = String(today.getDate() - 2).padStart(2, "0");
+      let mm = String(today.getMonth() + 1).padStart(2, "0");
+      let yyyy = today.getFullYear();
+
+      today = yyyy + "-" + mm + "-" + dd;
+      return today;
+    },
+    yesterday() {
+      let today = new Date();
+      let dd = String(today.getDate() - 3).padStart(2, "0");
+      let mm = String(today.getMonth() + 1).padStart(2, "0");
+      let yyyy = today.getFullYear();
+
+      today = yyyy + "-" + mm + "-" + dd;
+      return today;
+    },
   },
 };
 </script>
@@ -220,8 +300,19 @@ export default {
         div {
           display: flex;
           justify-content: center;
+          align-items: center;
           padding: 15px 30px;
           width: 200px;
+        }
+        .change {
+          .up {
+            color: rgb(2, 255, 2);
+            font-size: 18pt;
+          }
+          .down {
+            color: red;
+            font-size: 18pt;
+          }
         }
       }
     }
@@ -233,6 +324,18 @@ export default {
         width: 250px;
         background-color: #1b2ecc;
         text-align: center;
+      }
+      .blockContent {
+        div {
+          font-size: 20px;
+          margin-top: 15px;
+          .up {
+            color: rgb(2, 255, 2);
+          }
+          .down {
+            color: red;
+          }
+        }
       }
       .filterBlock {
         margin-bottom: 15px;

@@ -101,6 +101,7 @@ export default {
       EUR: 0,
       search: "",
       filterIndustry: "",
+      act: [],
     };
   },
   computed: {
@@ -112,7 +113,11 @@ export default {
       return this.companies
 
         .filter((item) => {
-          return this.filterIndustry == '' || this.filterIndustry == 'Все' || item.industry == this.filterIndustry;
+          return (
+            this.filterIndustry == "" ||
+            this.filterIndustry == "Все" ||
+            item.industry == this.filterIndustry
+          );
         })
 
         .filter((item) => {
@@ -120,15 +125,43 @@ export default {
         });
     },
   },
-  firestore() {
-    return {
-      companies: db.collection("Company").orderBy("name"),
-    };
-  },
+
+  // firestore() {
+  //   return {
+  //     companies: db.collection("Company"),
+  //   };
+  // },
+
+  // XQ7CEMU57RA8KASN - ключ
   async created() {
     const res = await axios.get(`https://www.cbr-xml-daily.ru/daily_json.js`);
     this.USD = res.data.Valute.USD;
     this.EUR = res.data.Valute.EUR;
+    db.collection("Company")
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((s, i) => {
+          const data = s.data();
+          let company = {
+            foundation_date: data.foundation_date,
+            industry: data.industry,
+            info: data.info,
+            name: data.name,
+            office: data.office,
+            owner: data.owner,
+            symbol: data.symbol,
+          };
+          this.companies.push(company);
+        });
+      })
+      .then(() => {
+        for (let i = 0; i < this.companies.length; i++) {
+          this.act[i] = axios.get(
+            `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${this.companies[i].symbol}&apikey=90E2UFUA48EJPJNO`
+          );
+          console.log(this.act[i].data);
+        }
+      });
   },
 };
 </script>

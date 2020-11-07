@@ -56,9 +56,14 @@
             :key="id"
           >
             <div>{{ company.name }}</div>
-            <div>В разработке...</div>
-            <div>В разработке...</div>
-            <div>В разработке...</div>
+            <div>
+              {{ company.current }}
+            </div>
+            <div>
+              {{ company.change }}
+              %
+            </div>
+            <div>{{ company.valute }}</div>
             <div>{{ company.industry }}</div>
           </div>
         </div>
@@ -126,14 +131,10 @@ export default {
     },
   },
 
-  // firestore() {
-  //   return {
-  //     companies: db.collection("Company"),
-  //   };
-  // },
-
-  // XQ7CEMU57RA8KASN - ключ
-  async created() {
+  //Получаем валюту
+  //Получаем данные с БД и записываем в массив объектов
+  //Получаем акции компаний, которые есть в БД
+  async mounted() {
     const res = await axios.get(`https://www.cbr-xml-daily.ru/daily_json.js`);
     this.USD = res.data.Valute.USD;
     this.EUR = res.data.Valute.EUR;
@@ -145,24 +146,37 @@ export default {
           let company = {
             foundation_date: data.foundation_date,
             industry: data.industry,
+            valute: "USD",
             info: data.info,
             name: data.name,
             office: data.office,
             owner: data.owner,
             symbol: data.symbol,
+            current: axios.get(
+              `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${data.symbol}&apikey=C7K3G8O9D4JDF35A`
+            ),
+            change: null,
           };
           this.companies.push(company);
+          console.log(this.companies);
         });
       })
-      .then(() => {
-        for (let i = 0; i < this.companies.length; i++) {
-          this.act[i] = axios.get(
-            `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${this.companies[i].symbol}&apikey=90E2UFUA48EJPJNO`
-          );
-          console.log(this.act[i].data);
-        }
+      .then((response) => {
+        this.companies.forEach((item, i) => {
+          item.current.then((response) => {
+            item.current =
+              response.data["Time Series (Daily)"]["2020-11-06"]["1. open"];
+            item.change = (
+              (response.data["Time Series (Daily)"]["2020-11-06"]["1. open"] *
+                100) /
+                response.data["Time Series (Daily)"]["2020-11-05"]["1. open"] -
+              100
+            ).toFixed(2);
+          });
+        });
       });
   },
+  methods: {},
 };
 </script>
 

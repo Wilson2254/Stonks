@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <!-- <h1>List</h1>
     <hr />
     <table v-if="tasks.length">
@@ -32,7 +32,7 @@
     </table>
     <p v-else class="no__task">No tasks</p> -->
 
-    <div class="container">
+    <div class="content">
       <div class="header_img">
         <img src="../assets/logo.png" />
       </div>
@@ -45,8 +45,22 @@
           </div>
           <div class="parameters">
             <div>НАИМЕНОВАНИЕ</div>
-            <div>ЗНАЧЕНИЕ</div>
-            <div>ИЗМЕНЕНИЕ</div>
+            <div>
+              ЗНАЧЕНИЕ
+              <input
+                type="checkbox"
+                @change="sortValue"
+                v-model="sortValueFlag"
+              />
+            </div>
+            <div>
+              ИЗМЕНЕНИЕ
+              <input
+                type="checkbox"
+                @change="sortChange"
+                v-model="sortValueChange"
+              />
+            </div>
             <div>ВАЛЮТА</div>
             <div>ОТРАСЛЬ</div>
           </div>
@@ -74,7 +88,9 @@
 
         <div class="sidebar">
           <div class="filterBlock">
-            <div class="blockHeader"><h3>ФИЛЬТРЫ</h3></div>
+            <div class="blockHeader">
+              <h3>ФИЛЬТРЫ</h3>
+            </div>
             <div class="blockContent">
               Отрасль
               <select v-model="filterIndustry">
@@ -83,7 +99,17 @@
                 <option>Нефть и газ</option>
               </select>
             </div>
+
+            <div class="blockContent">
+              Изменение
+              <select v-model="filterChange">
+                <option>Все</option>
+                <option>Рост</option>
+                <option>Падение</option>
+              </select>
+            </div>
           </div>
+
           <div class="currencyBlock">
             <div class="blockHeader">
               <h3>КУРСЫ ВАЛЮТ ({{ dateValute }})</h3>
@@ -161,6 +187,9 @@ export default {
       dateStock: new Date(),
       search: "",
       filterIndustry: "",
+      filterChange: "",
+      sortValueFlag: false,
+      sortValueChange: false,
     };
   },
   computed: {
@@ -181,7 +210,17 @@ export default {
 
         .filter((item) => {
           return item.name.toLowerCase().indexOf(this.search) !== -1;
-        });
+        })
+
+        .filter((item) =>{
+          if (this.filterChange == 'Рост')
+          return item.change > 0
+          else if (this.filterChange == 'Падение')
+          return item.change < 0
+          else if (this.filterChange == 'Все') 
+          return item.change
+          else return item.change
+        })        
     },
   },
 
@@ -240,113 +279,135 @@ export default {
   },
 
   methods: {
-    today() {
-      let today = new Date();
-      let dd = String(today.getDate() - 2).padStart(2, "0");
-      let mm = String(today.getMonth() + 1).padStart(2, "0");
-      let yyyy = today.getFullYear();
-
-      today = yyyy + "-" + mm + "-" + dd;
-      return today;
+    sortValue() {
+      this.companies.sort((a, b) => {
+        if (this.sortValueFlag) {
+          return b.current - a.current;
+        } else {
+          return a.current - b.current;
+        }
+      });
     },
-    yesterday() {
-      let today = new Date();
-      let dd = String(today.getDate() - 3).padStart(2, "0");
-      let mm = String(today.getMonth() + 1).padStart(2, "0");
-      let yyyy = today.getFullYear();
-
-      today = yyyy + "-" + mm + "-" + dd;
-      return today;
+    sortChange() {
+      this.companies.sort((a, b) => {
+        if (this.sortValueChange) {
+          return b.change - a.change;
+        } else {
+          return a.change - b.change;
+        }
+      });
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.header_img {
-  padding-left: 30px;
-  background-color: white;
-}
-
 .container {
-  background-color: #e6eae8;
-  .bars {
-    display: flex;
-    padding: 10px;
-    .stocksHeader {
-      margin-right: 10px;
-      .title {
-        background-color: #1b2ecc;
-        padding: 15px 30px;
-        color: white;
-        margin-bottom: 10px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .parameters {
-        display: flex;
-        background-color: black;
-        div {
-          display: flex;
-          justify-content: center;
-          color: white;
-          padding: 15px 30px;
-          width: 200px;
-        }
-      }
-      .companies {
-        display: flex;
-        div {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          padding: 15px 30px;
-          width: 200px;
-        }
-        .change {
-          .up {
-            color: rgb(2, 255, 2);
-            font-size: 18pt;
-          }
-          .down {
-            color: red;
-            font-size: 18pt;
-          }
-        }
-      }
-    }
-    .sidebar {
-      color: white;
-      .filterBlock,
-      .currencyBlock {
-        padding: 5px;
-        width: 250px;
-        background-color: #1b2ecc;
-        text-align: center;
-      }
-      .blockContent {
-        div {
-          font-size: 20px;
-          margin-top: 15px;
-          .up {
-            color: rgb(2, 255, 2);
-          }
-          .down {
-            color: red;
-          }
-        }
-      }
-      .filterBlock {
-        margin-bottom: 15px;
-      }
-    }
-  }
+  display: flex;
+  justify-content: center;
 
-  .footer {
-    padding: 30px 0 30px 30px;
-    color: white;
-    background-color: black;
+  .content {
+    background-color: #e6eae8;
+    .header_img {
+      display: flex;
+      align-items: center;
+      padding-left: 30px;
+      background-color: white;
+    }
+
+    .bars {
+      display: flex;
+      padding: 10px;
+      .stocksHeader {
+        margin-right: 10px;
+        .title {
+          background-color: #1b2ecc;
+          padding: 15px 30px;
+          color: white;
+          margin-bottom: 10px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .parameters {
+          display: flex;
+          background-color: black;
+          div {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            padding: 15px 30px;
+            width: 200px;
+            input {
+              width: 20px;
+              color: gray;
+            }
+          }
+        }
+        .companies {
+          display: flex;
+          div {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px 30px;
+            width: 200px;
+          }
+          .change {
+            .up {
+              color: rgb(2, 255, 2);
+              font-size: 18pt;
+            }
+            .down {
+              color: red;
+              font-size: 18pt;
+            }
+          }
+        }
+      }
+      .sidebar {
+        color: white;
+        .blockHeader {
+          margin-bottom: 15px;
+          background-color: #1b2ecc;
+          padding: 15px;
+        }
+        .filterBlock,
+        .currencyBlock {
+          width: 300px;
+        }
+        .blockContent {
+          background-color: white;
+          color: black;
+          padding: 10px 20px;
+          select {
+            width: 100px;
+          }
+          div {
+            font-size: 20px;
+            margin: 5px 0;
+            .up {
+              margin-left: 10px;
+              color: rgb(2, 255, 2);
+            }
+            .down {
+              margin-left: 10px;
+              color: red;
+            }
+          }
+        }
+        .filterBlock {
+          margin-bottom: 15px;
+        }
+      }
+    }
+
+    .footer {
+      padding: 30px 0 30px 30px;
+      color: white;
+      background-color: black;
+    }
   }
 }
 </style>>

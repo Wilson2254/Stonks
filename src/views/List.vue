@@ -69,7 +69,11 @@
             v-for="(company, id) in filteredItems"
             :key="id"
           >
-            <div>{{ company.name }}</div>
+            <div>
+              <router-link :to="'/company/' + company.symbol">
+                {{ company.name }}
+              </router-link>
+            </div>
             <div>
               {{ company.current }}
             </div>
@@ -81,8 +85,8 @@
               <span class="up" v-else>&#9650;</span>
               {{ Math.abs(company.change) }} %
             </div>
-            <div>{{ company.valute }}</div>
-            <div>{{ company.industry }}</div>
+            <div>{{ company.valute.toUpperCase() }}</div>
+            <div class="industry">{{ company.industry }}</div>
           </div>
         </div>
 
@@ -94,9 +98,14 @@
             <div class="blockContent">
               Отрасль
               <select v-model="filterIndustry">
+                <option
+                  v-for="(company, id) in companies"
+                  :key="id"
+                  :value="company.industry"
+                >
+                  {{ company.industry }}
+                </option>
                 <option>Все</option>
-                <option>Торговля и ритэйл</option>
-                <option>Нефть и газ</option>
               </select>
             </div>
 
@@ -106,6 +115,15 @@
                 <option>Все</option>
                 <option>Рост</option>
                 <option>Падение</option>
+              </select>
+            </div>
+
+            <div class="blockContent">
+              Валюта
+              <select v-model="filterValute">
+                <option>USD</option>
+                <option>EUR</option>
+                <option>Все</option>
               </select>
             </div>
           </div>
@@ -184,10 +202,10 @@ export default {
       USD: 0,
       EUR: 0,
       dateValute: new Date(),
-      dateStock: new Date(),
       search: "",
       filterIndustry: "",
       filterChange: "",
+      filterValute: "",
       sortValueFlag: false,
       sortValueChange: false,
     };
@@ -212,15 +230,16 @@ export default {
           return item.name.toLowerCase().indexOf(this.search) !== -1;
         })
 
-        .filter((item) =>{
-          if (this.filterChange == 'Рост')
-          return item.change > 0
-          else if (this.filterChange == 'Падение')
-          return item.change < 0
-          else if (this.filterChange == 'Все') 
-          return item.change
-          else return item.change
-        })        
+        .filter((item) => {
+          if (this.filterChange == "Рост") return item.change > 0;
+          else if (this.filterChange == "Падение") return item.change < 0;
+          else if (this.filterChange == "Все") return item.change;
+          else return item.change;
+        })
+
+        .filter((item) => {
+          return this.filterValute == "" || this.filterValute == "Все" || item.valute.toUpperCase().trim() == this.filterValute;
+        });
     },
   },
 
@@ -240,7 +259,7 @@ export default {
           let company = {
             foundation_date: data.foundation_date,
             industry: data.industry,
-            valute: "USD",
+            valute: data.valute,
             info: data.info,
             name: data.name,
             office: data.office,
@@ -353,6 +372,9 @@ export default {
             align-items: center;
             padding: 15px 30px;
             width: 200px;
+          }
+          .industry {
+            text-align: center;
           }
           .change {
             .up {

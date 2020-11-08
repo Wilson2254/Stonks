@@ -20,14 +20,14 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Gudea:ital,wght@0,400;0,700;1,400&display=swap");
 
 * {
-  font-family: "Gudea", sans-serif; /* Шрифт на веб-странице */
+  font-family: "Gudea", sans-serif; 
   margin: 0;
   padding: 0;
   font-weight: 700;
 }
 
 #app {
-  background: #011936; /* Цвет фона */
+  background: #011936; 
 }
 
 .group {

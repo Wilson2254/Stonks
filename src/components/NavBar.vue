@@ -1,7 +1,7 @@
 <template>
   <div class="topnav">
-    <router-link to="/">Create</router-link>
-    <router-link to="/list">List</router-link>
+    <!-- <router-link to="/">Create</router-link>
+    <router-link to="/list">List</router-link> -->
   </div>
 </template>
 

@@ -1,37 +1,5 @@
 <template>
   <div class="container">
-    <!-- <h1>List</h1>
-    <hr />
-    <table v-if="tasks.length">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Title</th>
-          <th>Descr</th>
-          <th>Open</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(task, idx) of tasks" :key="task.id">
-          <td>{{ idx + 1 }}</td>
-          <td>{{ task.title }}</td>
-          <td class="desc__td">
-            <div class="text">{{ task.description }}</div>
-          </td>
-          <td>
-            <router-link
-              tag="button"
-              class="btn btn-small"
-              :to="'/task/' + task.id"
-            >
-              Open
-            </router-link>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <p v-else class="no__task">No tasks</p> -->
-
     <div class="content">
       <div class="header_img">
         <img src="../assets/logo.png" />
@@ -66,11 +34,11 @@
           </div>
           <div
             class="companies"
-            v-for="(company, id) in filteredItems"
-            :key="id"
+            v-for="(company, symbol) in filteredItems"
+            :key="symbol"
           >
             <div>
-              <router-link :to="'/company/' + company.symbol">
+              <router-link :to="{name: 'company', params:{symbol:company.symbol}}">
                 {{ company.name }}
               </router-link>
             </div>
@@ -198,7 +166,6 @@ import { db } from "../main.js";
 export default {
   data() {
     return {
-      companies: [],
       USD: 0,
       EUR: 0,
       dateValute: new Date(),
@@ -210,14 +177,16 @@ export default {
       sortValueChange: false,
     };
   },
+
   computed: {
-    tasks() {
-      return this.$store.getters.tasks;
+    
+    companies() {
+      return this.$store.getters.getCompanies;
     },
 
     filteredItems: function () {
-      return this.companies
 
+      return this.companies
         .filter((item) => {
           return (
             this.filterIndustry == "" ||
@@ -238,7 +207,11 @@ export default {
         })
 
         .filter((item) => {
-          return this.filterValute == "" || this.filterValute == "Все" || item.valute.toUpperCase().trim() == this.filterValute;
+          return (
+            this.filterValute == "" ||
+            this.filterValute == "Все" ||
+            item.valute.toUpperCase().trim() == this.filterValute
+          );
         });
     },
   },
@@ -248,53 +221,9 @@ export default {
   //Получаем акции компаний, которые есть в БД
   async mounted() {
     const res = await axios.get(`https://www.cbr-xml-daily.ru/daily_json.js`);
-    this.dateValute = res.data.Date.slice(0, -15);
+    this.dateValute = res.data.Timestamp.slice(0, -15);
     this.USD = res.data.Valute.USD;
     this.EUR = res.data.Valute.EUR;
-    db.collection("Company")
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((s, i) => {
-          const data = s.data();
-          let company = {
-            foundation_date: data.foundation_date,
-            industry: data.industry,
-            valute: data.valute,
-            info: data.info,
-            name: data.name,
-            office: data.office,
-            owner: data.owner,
-            symbol: data.symbol,
-            current: axios.get(
-              `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${data.symbol}&apikey=8BKT3392WBPTYAE5`
-            ),
-            change: null,
-          };
-          this.companies.push(company);
-          console.log(this.companies);
-        });
-      })
-      .then((response) => {
-        this.companies.forEach((item, i) => {
-          item.current.then((response) => {
-            item.current = Number.parseFloat(
-              response.data["Time Series (Daily)"][
-                response.data["Meta Data"]["3. Last Refreshed"]
-              ]["4. close"]
-            ).toFixed(2);
-            item.change = (
-              (response.data["Time Series (Daily)"][
-                response.data["Meta Data"]["3. Last Refreshed"]
-              ]["4. close"] *
-                100) /
-                response.data["Time Series (Daily)"][
-                  response.data["Meta Data"]["3. Last Refreshed"]
-                ]["1. open"] -
-              100
-            ).toFixed(2);
-          });
-        });
-      });
   },
 
   methods: {
@@ -307,6 +236,7 @@ export default {
         }
       });
     },
+
     sortChange() {
       this.companies.sort((a, b) => {
         if (this.sortValueChange) {
@@ -404,7 +334,8 @@ export default {
           color: black;
           padding: 10px 20px;
           select {
-            width: 100px;
+            width: 20px;
+            border: none;
           }
           div {
             font-size: 20px;

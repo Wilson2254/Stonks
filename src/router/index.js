@@ -3,24 +3,17 @@ import VueRouter from 'vue-router'
 
 Vue.use(VueRouter)
 
-const routes = [
-    // {
-    //     path: '/',
-    //     name: 'create',
-    //     component: () =>
-    //         import ('../views/Create.vue')
-    // },
-    {
+const routes = [{
         path: '/',
         name: 'list',
         component: () =>
-            import ('../views/List.vue')
+            import ('../views/ListCompany.vue')
     },
     {
-        path: '/company/:id',
+        path: '/company/:symbol',
         name: 'company',
         component: () =>
-            import ('../views/Task.vue')
+            import ('../views/Company.vue')
     }
 ]
 

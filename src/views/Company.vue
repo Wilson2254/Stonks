@@ -16,7 +16,14 @@
             <div class="cur_stock">
               {{ company.current }}
               <div class="procent_valute">
-                <div class="procent">{{ company.change }}%</div>
+                <div
+                  class="procent"
+                  :style="{ color: company.change < 0 ? '#EC0033' : 'green' }"
+                >
+                  <span class="down" v-if="company.change < 0">&#9660;</span>
+                  <span class="up" v-else>&#9650;</span
+                  >{{ Math.abs(company.change) }}%
+                </div>
                 <div class="valute">{{ company.valute.toUpperCase() }}</div>
               </div>
             </div>
@@ -24,29 +31,48 @@
           <div class="second">
             <div class="open">
               <div>Открытие</div>
-              <div>{{ company.open }}</div>
+              <div>{{ company.open }} {{ sign }}</div>
             </div>
             <div class="close">
               <div>Закрытие</div>
-              <div>{{ company.current }}</div>
+              <div>{{ company.current }} {{ sign }}</div>
             </div>
             <div class="change">
               <div>Изменение</div>
-              <div>{{ company.change }}</div>
+              <div :style="{ color: company.change < 0 ? '#EC0033' : 'green' }">
+                <span class="down" v-if="company.change < 0">&#9660;</span>
+                <span class="up" v-else>&#9650;</span
+                >{{ Math.abs(company.change) }}%
+                <span
+                  v-if="parseFloat(company.current) > parseFloat(company.open)"
+                  >(+{{
+                    (
+                      parseFloat(company.current) - parseFloat(company.open)
+                    ).toFixed(2)
+                  }} {{ sign }})</span
+                >
+                <span v-else
+                  >({{
+                    (
+                      parseFloat(company.current) - parseFloat(company.open)
+                    ).toFixed(2)
+                  }}{{ sign }})</span
+                >
+              </div>
             </div>
           </div>
           <div class="third">
             <div class="max">
               <div>Макс. цена</div>
-              <div>{{ company.max }}</div>
+              <div>{{ company.max }} {{ sign }}</div>
             </div>
             <div class="min">
               <div>Мин. цена</div>
-              <div>{{ company.min }}</div>
+              <div>{{ company.min }} {{ sign }}</div>
             </div>
             <div class="value">
               <div>Объем</div>
-              <div>{{ company.val }}</div>
+              <div>{{ company.val }} {{ sign }}</div>
             </div>
           </div>
           <div class="four">
@@ -56,11 +82,11 @@
             </div>
             <div class="market">
               <div>Рынок</div>
-              <div>Россия</div>
+              <div>США</div>
             </div>
             <div class="capital">
               <div>Капитализация</div>
-              <div>{{ company.capital }}</div>
+              <div>{{ company.capital.toString().slice(0, -9)}} млрд. {{ sign }}</div>
             </div>
           </div>
         </div>
@@ -85,6 +111,9 @@ export default {
   computed: {
     company() {
       return this.$store.getters.companyBySymbol(this.$route.params.symbol);
+    },
+    sign() {
+      return this.company.valute.trim() == "usd" ? "$" : "€";
     },
   },
 };
@@ -112,11 +141,11 @@ export default {
       padding: 34px 38px;
       .first {
         .name {
-          font-size: 24px;
+          font-size: 32px;
           color: #1b2ecc;
         }
         .dateUpdate {
-          font-size: 12px;
+          font-size: 14px;
           color: #b3b3b3;
         }
         .cur_stock {
@@ -132,7 +161,7 @@ export default {
             }
             .valute {
               color: #7c7c7c;
-              font-size: 14px;
+              font-size: 16px;
             }
           }
         }
@@ -214,6 +243,12 @@ export default {
     padding: 34px 38px;
     color: white;
     background-color: black;
+  }
+  .up {
+    color: rgb(2, 255, 2);
+  }
+  .down {
+    color: red;
   }
 }
 </style>

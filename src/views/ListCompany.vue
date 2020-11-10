@@ -8,10 +8,7 @@
       <div class="bars">
         <div class="stocksHeader">
           <div class="title">
-            <h2>
-              КОТИРОВКИ
-              <span class="dateUpdate"> [{{ companies[0].dateUpdate }}] </span>
-            </h2>
+            <h2>КОТИРОВКИ</h2>
 
             <input v-model="search" placeholder="Компания" />
           </div>
@@ -41,26 +38,26 @@
             v-for="(company, symbol) in filteredItems"
             :key="symbol"
           >
-            <div>
-              <router-link
-                :to="{ name: 'company', params: { symbol: company.symbol } }"
-              >
-                {{ company.name }}
-              </router-link>
-            </div>
-            <div>
-              {{ company.current }}
-            </div>
-            <div
-              class="change"
-              :style="{ color: company.change < 0 ? '#EC0033' : 'green' }"
+            <router-link
+              :to="{ name: 'company', params: { symbol: company.symbol } }"
             >
-              <span class="down" v-if="company.change < 0">&#9660;</span>
-              <span class="up" v-else>&#9650;</span>
-              {{ Math.abs(company.change) }} %
-            </div>
-            <div>{{ company.valute.toUpperCase() }}</div>
-            <div class="industry">{{ company.industry }}</div>
+              <div class="name">
+                {{ company.name }}
+              </div>
+              <div>
+                {{ company.current }}
+              </div>
+              <div
+                class="change"
+                :style="{ color: company.change < 0 ? '#EC0033' : 'green' }"
+              >
+                <span class="down" v-if="company.change < 0">&#9660;</span>
+                <span class="up" v-else>&#9650;</span>
+                {{ Math.abs(company.change) }} %
+              </div>
+              <div>{{ company.valute.toUpperCase() }}</div>
+              <div class="industry">{{ company.industry }}</div>
+            </router-link>
           </div>
         </div>
 
@@ -72,6 +69,7 @@
             <div class="blockContent">
               Отрасль
               <select v-model="filterIndustry">
+                <option>Все</option>
                 <option
                   v-for="(company, id) in companies"
                   :key="id"
@@ -79,7 +77,6 @@
                 >
                   {{ company.industry }}
                 </option>
-                <option>Все</option>
               </select>
             </div>
 
@@ -95,9 +92,9 @@
             <div class="blockContent">
               Валюта
               <select v-model="filterValute">
+                <option>Все</option>
                 <option>USD</option>
                 <option>EUR</option>
-                <option>Все</option>
               </select>
             </div>
           </div>
@@ -284,10 +281,6 @@ export default {
           h2 {
             display: flex;
             align-items: center;
-            .dateUpdate {
-              font-size: 16px;
-              margin-left: 10px;
-            }
           }
         }
         .parameters {
@@ -307,25 +300,35 @@ export default {
           }
         }
         .companies {
-          display: flex;
-          div {
+          a {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 15px 30px;
-            width: 200px;
-          }
-          .industry {
-            text-align: center;
-          }
-          .change {
-            .up {
-              color: rgb(2, 255, 2);
-              font-size: 18pt;
+            color: black;
+            text-decoration: none;
+            &:active {
+              opacity: 0.8;
             }
-            .down {
-              color: red;
-              font-size: 18pt;
+            &:hover {
+              background-color:  #3C8AE6;
+            }
+            div {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              padding: 15px 30px;
+              width: 200px;
+            }
+            .industry {
+              text-align: center;
+            }
+            .change {
+              .up {
+                color: rgb(2, 255, 2);
+                font-size: 18pt;
+              }
+              .down {
+                color: red;
+                font-size: 18pt;
+              }
             }
           }
         }

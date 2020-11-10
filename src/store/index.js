@@ -35,6 +35,12 @@ export default new Vuex.Store({
                                 `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${data.symbol}&apikey=8BKT3392WBPTYAE5`
                             ),
                             change: null,
+                            open: null,
+                            max: null,
+                            min: null,
+                            val: null,
+                            capital: data.capitalization,
+                            dateUpdate: null,
                         };
                         companies.push(company);
                     });
@@ -57,6 +63,27 @@ export default new Vuex.Store({
                                 ]["1. open"] -
                                 100
                             ).toFixed(2);
+                            item.open = Number.parseFloat(
+                                response.data["Time Series (Daily)"][
+                                    response.data["Meta Data"]["3. Last Refreshed"]
+                                ]["1. open"]
+                            ).toFixed(2);
+                            item.max = Number.parseFloat(
+                                response.data["Time Series (Daily)"][
+                                    response.data["Meta Data"]["3. Last Refreshed"]
+                                ]["2. high"]
+                            ).toFixed(2);
+                            item.min = Number.parseFloat(
+                                response.data["Time Series (Daily)"][
+                                    response.data["Meta Data"]["3. Last Refreshed"]
+                                ]["3. low"]
+                            ).toFixed(2);
+                            item.val = Number.parseFloat(
+                                response.data["Time Series (Daily)"][
+                                    response.data["Meta Data"]["3. Last Refreshed"]
+                                ]["5. volume"]
+                            ).toFixed(2);
+                            item.dateUpdate = response.data["Meta Data"]["3. Last Refreshed"]
                             commit('set_companies', companies)
                         });
                     });

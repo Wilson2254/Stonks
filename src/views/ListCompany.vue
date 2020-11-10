@@ -8,7 +8,11 @@
       <div class="bars">
         <div class="stocksHeader">
           <div class="title">
-            <h2>КОТИРОВКИ</h2>
+            <h2>
+              КОТИРОВКИ
+              <span class="dateUpdate"> [{{ companies[0].dateUpdate }}] </span>
+            </h2>
+
             <input v-model="search" placeholder="Компания" />
           </div>
           <div class="parameters">
@@ -38,7 +42,9 @@
             :key="symbol"
           >
             <div>
-              <router-link :to="{name: 'company', params:{symbol:company.symbol}}">
+              <router-link
+                :to="{ name: 'company', params: { symbol: company.symbol } }"
+              >
                 {{ company.name }}
               </router-link>
             </div>
@@ -179,13 +185,11 @@ export default {
   },
 
   computed: {
-    
     companies() {
       return this.$store.getters.getCompanies;
     },
 
     filteredItems: function () {
-
       return this.companies
         .filter((item) => {
           return (
@@ -277,6 +281,14 @@ export default {
           display: flex;
           justify-content: space-between;
           align-items: center;
+          h2 {
+            display: flex;
+            align-items: center;
+            .dateUpdate {
+              font-size: 16px;
+              margin-left: 10px;
+            }
+          }
         }
         .parameters {
           display: flex;

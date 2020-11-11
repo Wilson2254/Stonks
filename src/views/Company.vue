@@ -102,7 +102,14 @@
           <div class="add">Штаб квартира: {{ company.office }}</div>
         </div>
         <div class="graphics">
-          <div>График роста и падений</div>
+          <div class="title">График роста и падений</div>
+          <div class="area">
+            <GChart
+              type="LineChart"
+              :data="chartData"
+              :options="chartOptions.chart"
+            />
+          </div>
         </div>
         <div class="footer"><p>Copyright ©2020. ООО «STONKS»</p></div>
       </div>
@@ -112,7 +119,36 @@
 
 
 <script>
+import { GChart } from "vue-google-charts";
 export default {
+  components: {
+    GChart,
+  },
+  data() {
+    return {
+      chartData: [
+        ["Year", "Цена акции"],
+        ["2008", 1000],
+        ["2009", 1170],
+        ["2010", 660],
+        ["2011", 50],
+        ["2012", 400],
+        ["2013", 247],
+        ["2014", 800],
+        ["2015", 3265],
+        ["2016", 400],
+        ["2017", 1800],
+        ["2018", 2100],
+        ["2019", 1550],
+      ],
+      chartOptions: {
+        chart: {
+          title: "Рост и падение",
+          height: 600,
+        },
+      },
+    };
+  },
   computed: {
     company() {
       return this.$store.getters.companyBySymbol(this.$route.params.symbol);
@@ -263,7 +299,7 @@ export default {
     margin: 15px 38px;
     padding: 34px 38px;
     background-color: #ffffff;
-    div {
+    .title {
       font-size: 34px;
       color: #000000;
       margin-bottom: 20px;

@@ -2,9 +2,9 @@
   <div class="container">
     <div>
       <div class="content">
-        <div class="header_img">
+        <router-link class="header_img" :to="{ name: 'list' }">
           <img src="../assets/logo.png" />
-        </div>
+        </router-link>
         <div class="stock">
           <div class="first">
             <div class="name">
@@ -49,7 +49,8 @@
                     (
                       parseFloat(company.current) - parseFloat(company.open)
                     ).toFixed(2)
-                  }} {{ sign }})</span
+                  }}
+                  {{ sign }})</span
                 >
                 <span v-else
                   >({{
@@ -86,7 +87,9 @@
             </div>
             <div class="capital">
               <div>Капитализация</div>
-              <div>{{ company.capital.toString().slice(0, -9)}} млрд. {{ sign }}</div>
+              <div>
+                {{ company.capital.toString().slice(0, -9) }} млрд. {{ sign }}
+              </div>
             </div>
           </div>
         </div>
@@ -94,11 +97,13 @@
         <div class="description">
           <div class="info">Описание</div>
           <div class="text">{{ company.info }}</div>
-          <div class="text">Владелец {{ company.owner }}</div>
-          <div class="text">Основание {{ company.foundation_date }}</div>
-          <div class="text">Штаб квартира {{ company.office }}</div>
+          <div class="add">Владелец: {{ company.owner }}</div>
+          <div class="add">Основание: {{ company.foundation_date }} год</div>
+          <div class="add">Штаб квартира: {{ company.office }}</div>
         </div>
-        <div class="graphics"></div>
+        <div class="graphics">
+          <div>График роста и падений</div>
+        </div>
         <div class="footer"><p>Copyright ©2020. ООО «STONKS»</p></div>
       </div>
     </div>
@@ -237,6 +242,31 @@ export default {
       background-color: #ffffff;
       margin: 15px 38px;
       padding: 34px 38px;
+      .info {
+        font-size: 34px;
+        color: #000000;
+        margin-bottom: 20px;
+      }
+      .text {
+        font-weight: 500;
+        margin-bottom: 20px;
+        color: #474747;
+      }
+      .add {
+        color: black;
+        margin-top: 5px;
+      }
+    }
+  }
+  .graphics {
+    height: 700px;
+    margin: 15px 38px;
+    padding: 34px 38px;
+    background-color: #ffffff;
+    div {
+      font-size: 34px;
+      color: #000000;
+      margin-bottom: 20px;
     }
   }
   .footer {

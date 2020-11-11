@@ -266,6 +266,7 @@ export default {
     }
 
     .bars {
+      height: 1200px;
       display: flex;
       padding: 10px;
       .stocksHeader {

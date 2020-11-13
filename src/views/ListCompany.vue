@@ -309,7 +309,7 @@ export default {
               opacity: 0.8;
             }
             &:hover {
-              background-color:  #3C8AE6;
+              background-color: #3C8AE6;
             }
             div {
               display: flex;
@@ -376,6 +376,98 @@ export default {
       padding: 30px 0 30px 30px;
       color: white;
       background-color: black;
+    }
+  }
+}
+
+@media (max-width: 1650px) {
+  .container {
+    justify-content: left;
+    .content {
+      .bars {
+        .stocksHeader {
+          .parameters {
+            div {
+              width: 120px;
+            }
+          }
+          .companies {
+            a {
+              div {
+                width: 120px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 1250px) {
+  .container {
+    .content {
+      .bars {
+        .stocksHeader {
+          .parameters {
+            div {
+              padding: 5px 15px;
+              width: 100px;
+              font-size: 14px;
+            }
+          }
+          .companies {
+            a {
+              div {
+                padding: 5px 15px;
+                width: 100px;
+                font-size: 14px;
+              }
+            }
+          }
+        }
+
+        .sidebar {
+          color: white;
+          margin-left: 10px;
+          h3{
+            font-size: 16px;
+          }
+          .blockHeader {
+            margin-bottom: 10px;
+            background-color: #1b2ecc;
+            padding: 10px;
+          }
+          .filterBlock,
+          .currencyBlock {
+            width: 200px;
+          }
+          .blockContent {
+            background-color: white;
+            color: black;
+            padding: 10px 10px;
+            select {
+              width: 20px;
+              border: none;
+            }
+            div {
+              font-size: 16px;
+              margin: 5px 0;
+              .up {
+                margin-left: 10px;
+                color: rgb(2, 255, 2);
+              }
+              .down {
+                margin-left: 10px;
+                color: red;
+              }
+            }
+          }
+          .filterBlock {
+            margin-bottom: 15px;
+          }
+        }
+      }
     }
   }
 }

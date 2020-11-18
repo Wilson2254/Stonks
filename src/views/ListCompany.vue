@@ -428,14 +428,12 @@ export default {
         }
 
         .sidebar {
-          color: white;
           margin-left: 10px;
           h3{
             font-size: 16px;
           }
           .blockHeader {
             margin-bottom: 10px;
-            background-color: #1b2ecc;
             padding: 10px;
           }
           .filterBlock,
@@ -443,8 +441,6 @@ export default {
             width: 200px;
           }
           .blockContent {
-            background-color: white;
-            color: black;
             padding: 10px 10px;
             select {
               width: 20px;
@@ -453,14 +449,6 @@ export default {
             div {
               font-size: 16px;
               margin: 5px 0;
-              .up {
-                margin-left: 10px;
-                color: rgb(2, 255, 2);
-              }
-              .down {
-                margin-left: 10px;
-                color: red;
-              }
             }
           }
           .filterBlock {

@@ -126,21 +126,6 @@ export default {
   },
   data() {
     return {
-      chartData: [
-        ["Year", "Цена акции"],
-        ["2008", 1000],
-        ["2009", 1170],
-        ["2010", 660],
-        ["2011", 50],
-        ["2012", 400],
-        ["2013", 247],
-        ["2014", 800],
-        ["2015", 3265],
-        ["2016", 400],
-        ["2017", 1800],
-        ["2018", 2100],
-        ["2019", 1550],
-      ],
       chartOptions: {
         chart: {
           title: "Рост и падение",
@@ -156,6 +141,14 @@ export default {
     sign() {
       return this.company.valute.trim() == "usd" ? "$" : "€";
     },
+    chartData(){
+      let stonksHistory = []
+      stonksHistory[0] = ["Year", "Цена акции"]
+      for (let i = 1; i < this.company.history.length; i++) {
+        stonksHistory[i] = [i.toString(), this.company.history[i]]        
+      }
+      return stonksHistory
+    }
   },
 };
 </script>
@@ -225,7 +218,8 @@ export default {
           }
         }
         .open,
-        .close {
+        .close,
+        .change {
           border-bottom: 1px solid #8c8383;
         }
       }
@@ -247,7 +241,8 @@ export default {
           }
         }
         .max,
-        .min {
+        .min,
+        .value {
           border-bottom: 1px solid #8c8383;
         }
       }
@@ -269,7 +264,8 @@ export default {
           }
         }
         .type,
-        .market {
+        .market,
+        .capital {
           border-bottom: 1px solid #8c8383;
         }
       }
@@ -315,6 +311,89 @@ export default {
   }
   .down {
     color: red;
+  }
+}
+
+@media (max-width: 1500px) {
+  .container {
+    display: block;
+    .content {
+      margin: 0;
+    }
+  }
+}
+
+@media (max-width: 1330px) {
+  .container {
+    .content {
+      .stock {
+        display: block;
+      }
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    .content {
+      .stock {
+        .second,
+        .third,
+        .four {
+          .open,
+          .close,
+          .change,
+          .max,
+          .min,
+          .value,
+          .type,
+          .market,
+          .capital {
+            div:nth-child(1) {
+              margin-right: 20px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 405px) {
+  .container {
+    .content {
+      .stock {
+        .first {
+          .cur_stock {
+            font-size: 38px;
+            .procent_valute {
+              .procent {
+                font-size: 20px;
+              }
+            }
+          }
+        }
+        .second,
+        .third,
+        .four {
+          .open,
+          .close,
+          .change,
+          .max,
+          .min,
+          .value,
+          .type,
+          .market,
+          .capital {
+            display: block;
+            div:nth-child(1) {
+              margin-right: 20px;
+              padding: 0;
+            }
+          }
+        }
+      }
+    }
   }
 }
 </style>

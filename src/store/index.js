@@ -41,6 +41,7 @@ export default new Vuex.Store({
                             val: null,
                             capital: data.capitalization,
                             dateUpdate: null,
+                            history: data.history
                         };
                         companies.push(company);
                     });
@@ -84,6 +85,7 @@ export default new Vuex.Store({
                                 ]["5. volume"]
                             ).toFixed(2);
                             item.dateUpdate = response.data["Meta Data"]["3. Last Refreshed"]
+                            item.history.push(item.current)
                             commit('set_companies', companies)
                         });
                     });
